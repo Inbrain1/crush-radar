@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "742196958079",
+    "project_id": "crush-3d6e5",
+    "storage_bucket": "crush-3d6e5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:742196958079:android:b8591d956ddbe969ab804a",
+        "android_client_info": {
+          "package_name": "com.example.money"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLoIO5nhf5Mm89NRKTcNEntz-8zeEwZL0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
