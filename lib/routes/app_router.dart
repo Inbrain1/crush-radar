@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../core/providers/auth_state_provider.dart';
 import '../features/auth/presentation/login_page.dart';
-import '../features/auth/presentation/register_page.dart';
+import '../features/auth/presentation/register_step1.dart';
 import '../ui/pages/home_page.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -38,7 +38,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/register',
-        builder: (_, __) => const RegisterPage(),
+        builder: (_, __) => const RegisterStep1Page(),
       ),
       GoRoute(
         path: '/home',

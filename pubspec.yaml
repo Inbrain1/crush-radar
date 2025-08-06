@@ -12,6 +12,9 @@ dependencies:
     sdk: flutter
 
   # Firebase
+  flutter_tags: ^1.0.0-nullsafety.1
+  flutter_hooks: ^0.20.1
+  flutter_animate: ^4.5.0
   firebase_core: ^2.32.0
   firebase_auth: ^4.20.0
   cloud_firestore: ^4.17.0
@@ -21,6 +24,7 @@ dependencies:
   intl: ^0.19.0
   http: ^0.13.6
   cupertino_icons: ^1.0.8
+  google_fonts: ^4.0.4
 
 dev_dependencies:
   flutter_test:

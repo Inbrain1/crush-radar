@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../ui/widgets/custom_text_field.dart';
 import '../controller/auth_controller.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
@@ -29,30 +30,18 @@ class _LoginScreenState extends ConsumerState<LoginPage> {
     print("✉️ Email ingresado: '$email'");
     print("🔒 Password ingresado: '$password'");
 
-    if (email.isEmpty || !email.contains('@') || !email.contains('.')) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("❌ Ingresa un correo electrónico válido")),
-      );
-      return;
-    }
-
-    if (password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("❌ Ingresa tu contraseña")),
-      );
-      return;
-    }
-
-    try {
-      await ref.read(authControllerProvider).login(
-        email: email,
-        password: password,
-      );
-    } catch (e) {
-      print("⚠️ Error al hacer login: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("⛔ Error al iniciar sesión: $e")),
-      );
+    if (_formKey.currentState?.validate() ?? false) {
+      try {
+        await ref.read(authControllerProvider).login(
+          email: email,
+          password: password,
+        );
+      } catch (e) {
+        print("⚠️ Error al hacer login: $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("⛔ Error al iniciar sesión: $e")),
+        );
+      }
     }
   }
 
@@ -66,18 +55,15 @@ class _LoginScreenState extends ConsumerState<LoginPage> {
           key: _formKey,
           child: ListView(
             children: [
-              TextFormField(
+              CustomTextField(
                 controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-                validator: (value) =>
-                value == null || value.isEmpty ? 'Ingrese su email' : null,
+                label: 'Email',
+                keyboardType: TextInputType.emailAddress,
               ),
-              TextFormField(
+              CustomTextField(
                 controller: _passwordController,
-                decoration: const InputDecoration(labelText: 'Contraseña'),
-                obscureText: true,
-                validator: (value) =>
-                value == null || value.length < 6 ? 'Mínimo 6 caracteres' : null,
+                label: 'Contraseña',
+                isPassword: true,
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -86,12 +72,11 @@ class _LoginScreenState extends ConsumerState<LoginPage> {
               ),
               TextButton(
                 onPressed: () {
-                  context.go('/register'); // GoRouter maneja la navegación
+                  context.go('/register');
                 },
                 child: const Text("¿No tienes cuenta? Regístrate"),
               ),
             ],
-
           ),
         ),
       ),
