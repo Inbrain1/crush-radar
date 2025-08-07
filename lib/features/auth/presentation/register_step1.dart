@@ -1,5 +1,7 @@
   import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:money/ui/widgets/custom_text_field.dart';
 import '../../../ui/widgets/gender_selector.dart';
 import 'register_step2.dart';
 
@@ -66,23 +68,23 @@ class _RegisterStep1PageState extends ConsumerState<RegisterStep1Page> {
           key: _formKey,
           child: ListView(
             children: [
-              TextFormField(
+              CustomTextField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Nombre completo'),
+                label: 'Nombre completo',
                 validator: (value) => value == null || value.isEmpty ? 'Ingresa tu nombre' : null,
               ),
               const SizedBox(height: 10),
-              TextFormField(
+              CustomTextField(
                 controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Correo electrónico'),
+                label: 'Correo electrónico',
                 validator: (value) =>
                 value == null || !value.contains('@') ? 'Correo inválido' : null,
               ),
               const SizedBox(height: 10),
-              TextFormField(
+              CustomTextField(
                 controller: _passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(labelText: 'Contraseña'),
+                isPassword: true,
+                label: 'Contraseña',
                 validator: (value) =>
                 value == null || value.length < 6 ? 'Mínimo 6 caracteres' : null,
               ),
@@ -106,9 +108,44 @@ class _RegisterStep1PageState extends ConsumerState<RegisterStep1Page> {
                 onTap: () => _selectBirthdate(context),
               ),
               const SizedBox(height: 30),
-              ElevatedButton(
-                onPressed: _goToNextStep,
-                child: const Text("Siguiente"),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        context.go('/login');
+                        },
+                      icon: const Icon(Icons.arrow_back),
+                      label: const Text("Atrás"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey[300],
+                        foregroundColor: Colors.black87,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 3,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: _goToNextStep,
+                      icon: const Icon(Icons.arrow_forward),
+                      label: const Text("Siguiente"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueGrey,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 4,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

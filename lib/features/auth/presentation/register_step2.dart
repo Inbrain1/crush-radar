@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../auth/controller/auth_controller.dart'; // ✅ asegúrate de importar bien
 
-class RegisterStep2Page extends StatefulWidget {
+class RegisterStep2Page extends ConsumerStatefulWidget {
   final String name;
   final String email;
   final String password;
@@ -17,20 +20,21 @@ class RegisterStep2Page extends StatefulWidget {
   });
 
   @override
-  State<RegisterStep2Page> createState() => _RegisterStep2PageState();
+  ConsumerState<RegisterStep2Page> createState() => _RegisterStep2PageState();
 }
 
-class _RegisterStep2PageState extends State<RegisterStep2Page> {
+class _RegisterStep2PageState extends ConsumerState<RegisterStep2Page> {
   final List<String> selectedInterests = [];
 
-  final List<Map<String, String>> interests = [
-    {"title": "Leer", "image": "assets/interests/book.png"},
-    {"title": "Música", "image": "assets/interests/music.png"},
-    {"title": "Películas", "image": "assets/interests/movie.png"},
-    {"title": "Viajar", "image": "assets/interests/travel.png"},
-    {"title": "Videojuegos", "image": "assets/interests/gaming.png"},
-    {"title": "Fitness", "image": "assets/interests/fitness.png"},
-    {"title": "Comida", "image": "assets/interests/food.png"},
+  final List<Map<String, dynamic>> interests = [
+    {"title": "Leer", "image": "assets/interests/leer.jpg", "color": Colors.indigo},
+    {"title": "Música", "image": "assets/interests/musica.jpg", "color": Colors.deepPurple},
+    {"title": "Películas", "image": "assets/interests/peliculas.jpg", "color": Colors.teal},
+    {"title": "Viajar", "image": "assets/interests/vieaje.jpg", "color": Colors.orange},
+    {"title": "Videojuegos", "image": "assets/interests/videojuegos.jpg", "color": Colors.redAccent},
+    {"title": "Fitness", "image": "assets/interests/fittness.jpg", "color": Colors.green},
+    {"title": "Comida", "image": "assets/interests/comida.jpg", "color": Colors.brown},
+    {"title": "Animales", "image": "assets/interests/anumales.jpg", "color": Colors.blueGrey},
   ];
 
   void _toggleInterest(String title) {
@@ -43,11 +47,29 @@ class _RegisterStep2PageState extends State<RegisterStep2Page> {
     });
   }
 
-  void _goToNextStep() {
-    print("✅ Intereses seleccionados: $selectedInterests");
+  Future<void> _registerUser(WidgetRef ref) async {
+    try {
+      await ref.read(authControllerProvider).signUp(
+        email: widget.email,
+        password: widget.password,
+        name: widget.name,
+        gender: widget.gender,
+        age: DateTime.now().year - widget.birthDate.year,
+        location: "No especificado",
+        orientation: "No especificado",
+        interests: selectedInterests,
+      );
 
-    // Aquí deberías navegar al siguiente paso o registrar al usuario
-    // Navigator.push(...) o context.go('/register-step3')
+      if (mounted) {
+        context.go('/home');
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("⛔ Error: $e")),
+        );
+      }
+    }
   }
 
   @override
@@ -69,42 +91,99 @@ class _RegisterStep2PageState extends State<RegisterStep2Page> {
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
                 children: interests.map((item) {
-                  final selected = selectedInterests.contains(item["title"]);
+                  final String title = item["title"];
+                  final bool selected = selectedInterests.contains(title);
+                  final Color color = item["color"];
+
                   return GestureDetector(
-                    onTap: () => _toggleInterest(item["title"]!),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: selected ? Colors.pink.shade100 : Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: selected ? Colors.pink : Colors.grey,
-                          width: 2,
+                    onTap: () => _toggleInterest(title),
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Image.asset(
+                            item["image"],
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Image.asset(item["image"]!, height: 60),
-                          const SizedBox(height: 10),
-                          Text(
-                            item["title"]!,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: selected ? Colors.pink : Colors.black,
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(16),
+                            color: selected ? color.withOpacity(0.6) : Colors.black26,
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.5),
+                              borderRadius: const BorderRadius.vertical(
+                                bottom: Radius.circular(16),
+                              ),
                             ),
-                          )
-                        ],
-                      ),
+                            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                            width: double.infinity,
+                            child: Text(
+                              title,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 }).toList(),
               ),
             ),
-            ElevatedButton(
-              onPressed: _goToNextStep,
-              child: const Text("Siguiente"),
-            )
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.arrow_back),
+                    label: const Text("Atrás"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey[300],
+                      foregroundColor: Colors.black87,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 3,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Consumer(
+                    builder: (context, ref, _) {
+                      return ElevatedButton.icon(
+                        onPressed: () => _registerUser(ref),
+                        icon: const Icon(Icons.arrow_forward),
+                        label: const Text("Continuar"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.pinkAccent,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 4,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),

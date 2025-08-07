@@ -6,13 +6,14 @@ class CustomTextField extends StatelessWidget {
   final String label;
   final bool isPassword;
   final TextInputType keyboardType;
+  final String? Function(String?)? validator;
 
   const CustomTextField({
     super.key,
     required this.controller,
     required this.label,
     this.isPassword = false,
-    this.keyboardType = TextInputType.text,
+    this.keyboardType = TextInputType.text, this.validator,
   });
 
   @override
