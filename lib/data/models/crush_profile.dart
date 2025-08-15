@@ -1,7 +1,7 @@
 class CrushProfile {
   final String name;
   final int age;
-  final String imageUrl;
+  final String? imageUrl;
   final String distance;
 
   CrushProfile({

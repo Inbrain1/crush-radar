@@ -13,7 +13,8 @@ class CustomTextField extends StatelessWidget {
     required this.controller,
     required this.label,
     this.isPassword = false,
-    this.keyboardType = TextInputType.text, this.validator,
+    this.keyboardType = TextInputType.text,
+    this.validator,
   });
 
   @override
@@ -33,12 +34,7 @@ class CustomTextField extends StatelessWidget {
             borderSide: BorderSide(color: Theme.of(context).primaryColor),
           ),
         ),
-        validator: (value) {
-          if (value == null || value.trim().isEmpty) {
-            return 'Campo obligatorio';
-          }
-          return null;
-        },
+        validator: validator, // ✅ ESTA ES LA LÍNEA CLAVE
       ),
     );
   }
